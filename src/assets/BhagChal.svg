@@ -1,0 +1,28 @@
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <g id="background">
+   <rect x="25" y="25" width="400" height="400" id="svgBhagChal" fill="#ffffff" fill-opacity="0"/>
+   <g id="canvasGrid" display="none">
+    <rect id="board" width="450" height="450" x="25" y="25" stroke-width="0" fill="url(#gridpattern)"/>
+   </g>
+  </g>
+  <g id="gridLines">
+   <line stroke="#000" stroke-width="3" x1="325" y1="25" x2="325" y2="425"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="225" x2="425" y2="225"/>
+   <line stroke="#000" stroke-width="3" x1="225" y1="25" x2="225" y2="425"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="425" x2="425" y2="25"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="25" x2="425" y2="425"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="325" x2="425" y2="325"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="125" x2="425" y2="125"/>
+   <line stroke="#000" stroke-width="3" x1="225" y1="25" x2="25" y2="225"/>
+   <line stroke="#000" stroke-width="3" x1="225" y1="25" x2="425" y2="225"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="225" x2="225" y2="425"/>
+   <line stroke="#000" stroke-width="3" x1="225" y1="425" x2="425" y2="225"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="25" x2="425" y2="25"/>
+   <line stroke="#000" stroke-width="3" x1="125" y1="25" x2="125" y2="425"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="25" x2="25" y2="425"/>
+   <line stroke="#000" stroke-width="3" x1="25" y1="425" x2="425" y2="425"/>
+   <line stroke="#000" stroke-width="3" x1="425" y1="25" x2="425" y2="425"/>
+  </g>
+ </g>
+</svg>

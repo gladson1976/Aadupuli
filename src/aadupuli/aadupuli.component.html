@@ -1,0 +1,230 @@
+<div class="burst-12" *ngIf="newHighscore" (click)="this.newHighscore = false"
+  [ngClass]="{'tiger-win': !isTigerLost, 'sheep-win': isTigerLost}"></div>
+<div class="aadupuli-title title-border">
+  <table class="aadupuli-title">
+    <tr>
+      <td class="title">
+        <span>{{appTitle}}</span>
+      </td>
+      <td class="title text-right">
+        <span class="fa fa-refresh title-button cursor-pointer" (click)="startNewAadupuli()"></span>
+        <span class="fa fa-gears title-button cursor-pointer" (click)="showSettings()"></span>
+        <span class="fa fa-bar-chart title-button cursor-pointer" (click)="showHighscore()"></span>
+        <span class="fa fa-question title-button cursor-pointer" (click)="showHelp()"></span>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="aadupuli-title">
+  <table class="aadupuli-title">
+    <tr>
+      <td class="aadupuli-message" width="50%">
+        <span>{{aadupuliMessage}}</span>
+      </td>
+      <td class="aadupuli-message text-right">
+          <div class="aadupuli-icon-tiger" [ngClass]="{'aadupuli-icon-tiger-think': isTigerThinking, 'aadupuli-icon-tiger-blocked': isTigerLost}">&nbsp;</div>
+          <div class="aadupuli-icon-sheep-killed">{{aadupuliBoard.goatsRemoved}}</div>
+        <div class="aadupuli-icon-sheep">{{aadupuliSheepCount[aadupuliBoard.board] - aadupuliBoard.goatsPlaced}}</div>
+      </td>
+    </tr>
+  </table>
+</div>
+<div id="aadupuliContainer" class="aadupuli-container" [ngClass]="{'aadupuli-container-bg': settings.background}">
+  <svg xmlns="http://www.w3.org/2000/svg" class="svgTigerJump">
+    <line [attr.x1]="aadupuliTigerJump.x1" [attr.y1]="aadupuliTigerJump.y1" [attr.x2]="aadupuliTigerJump.x2" [attr.y2]="aadupuliTigerJump.y2"
+      stroke="red" stroke-width="2px" />
+  </svg>  
+  <img width="100%" #aadupuliBoardImage id="aadupuliBoard" src="./assets/Aadupuli.svg">
+  <div *ngFor="let markPoint of aadupuliMarkPoints; let i = index" [id]="markPoint.id" [class]="markPoint.class" [style.left.px]="markPoint.left" [style.top.px]="markPoint.top"
+    [style.width.px]="markPoint.width" [style.height.px]="markPoint.height" [style.margin-left.px]="markPoint.marginLeft" [style.margin-top.px]="markPoint.marginTop"
+    [ngClass]="{'circle-red': sheepKillPosition !== null && sheepKillPosition === i}"></div>
+  <div *ngFor="let jumpPoint of aadupuliJumpPoints; let i = index" [id]="jumpPoint.id" [class]="jumpPoint.class" [style.left.px]="jumpPoint.left" [style.top.px]="jumpPoint.top"
+    [style.width.px]="jumpPoint.width" [style.height.px]="jumpPoint.height" [style.margin-left.px]="jumpPoint.marginLeft" [style.margin-top.px]="jumpPoint.marginTop"
+    (click)="handleJumpPointSelect(i)"
+    [ngClass]="{'aadupuli-token-tiger': aadupuliBoard.aadupuli[i] === TIGER, 'aadupuli-token-sheep': aadupuliBoard.aadupuli[i] === SHEEP, 'selected': i === aadupuliSelectedPoint}"></div>
+</div>
+<div class="aadupuli-footer">
+
+</div>
+
+<ng-template #popupSettings let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Options</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <table class="settings-table">
+      <tr>
+        <td class="va-top">Play as</td>
+        <td class="text-right">
+          <button type="button" class="btn btn-sm btn-white text-right" id="playerSheep">
+            <div [ngClass]="{'settings-button-sheep': settings.player !== 0, 'settings-button-sheep-selected': settings.player === 0}"></div>
+          </button>
+          <button type="button" class="btn btn-sm btn-white text-right" id="playerTiger">
+            <div [ngClass]="{'settings-button-tiger': settings.player !== 1, 'settings-button-tiger-selected': settings.player === 1}"></div>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td class="va-top">Board</td>
+        <td class="text-right">
+          <button type="button" class="btn btn-sm btn-white text-right" id="boardAadupuli">
+            <div [ngClass]="{'settings-button-aadupuli': settings.board !== 0, 'settings-button-aadupuli-selected': settings.board === 0}"></div>
+          </button>
+          <button type="button" class="btn btn-sm btn-white text-right" id="boardBhagChal">
+            <div [ngClass]="{'settings-button-bhagchal': settings.board !== 1, 'settings-button-bhagchal-selected': settings.board === 1}"></div>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>Grass</td>
+        <td class="text-right va-middle">
+          <input type="checkbox" name="settingsBackground" id="settingsBackground" [(ngModel)]="settings.background" [value]="true" (change)="generateIntersectPoints()">
+        </td>
+      </tr>
+    </table>
+  </div>
+</ng-template>
+
+<ng-template #popupConfirm let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">{{appTitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    {{aadupuliPopupMessage}}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="c('Y')">Yes</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="d('N')">No</button>
+  </div>
+</ng-template>
+
+<ng-template #popupHighscore let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">{{appTitle}} - Stats</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <table class="settings-table">
+      <tr class="text-center font-bold">
+        <td class="text-left">Board</td>
+        <td>Tiger</td>
+        <td>Sheep</td>
+        <td>Played</td>
+      </tr>
+      <tr class="text-center" *ngFor="let boardName of aadupuliBoardNames; let i = index">
+        <td class="text-left">{{boardName}}</td>
+        <td>{{persistData.aadupuliStats.played[i][0] - persistData.aadupuliStats.won[i][0]}}</td>
+        <td>{{persistData.aadupuliStats.won[i][0]}}</td>
+        <td>{{persistData.aadupuliStats.played[i][0]}}</td>
+      </tr>
+      <tr>
+        <td colspan="4" class="text-right p-top-10">
+          <button type="button" class="btn btn-outline-danger" (click)="resetStats()">Reset Stats</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</ng-template>
+
+<ng-template #popupHelp let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">{{appTitle}} - Info</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <table class="settings-table">
+      <tr>
+        <td>
+          <div class="font-bold">Objective and Instructions</div>
+          <ul class="list-unstyled font-small">
+            <li>Aadupuliyaatam (literally, Game of Goats and Tigers) is a classic game played in South India.</li>
+            <li>It is a strategic, assymetric, two player game in which one player controls three tigers and the other controls upto fifteen goats or sheep.</li>
+            <li>The tigers 'hunt' the goats and the goats try to block the tigers' movements and capture them.</li>
+            <li>&nbsp;</li>
+            <li>At the start, the tigers are placed at the apex and the two positions closest to the apex. The goats start off the board.</li>
+            <li>The goats are placed one per turn in any of the intersections on the board. Players alternate between turns.</li>
+            <li>Moves are done along the lines from one intersection to another empty intersection.</li>
+            <li>&nbsp;</li>
+            <li class="font-bold">The tigers:</li>
+            <li>They can start capturing goats once the match has started.</li>
+            <li>Capturing is done by jumping over one goat per move to an adjacent empty intersection.</li>
+            <li>A tiger cannot jump over another tiger.</li>
+            <li></li>
+            <li class="font-bold">The goats:</li>
+            <li>They must leave the board when captured.</li>
+            <li>They can not jump over the tigers or other goats.</li>
+            <li>They can only move after all 15 goats have been placed on the board.</li>
+            <li></li>
+            <li class="font-bold">Winning</li>
+            <li>Tigers win if all (or 6 in some variants) the goats are captured. Goats win if all tigers are blocked from movement.</li>
+          </ul>
+        </td>
+      </tr>
+      <!-- <tr>
+        <td colspan="4" class="text-right p-top-10">
+          <button type="button" class="btn btn-outline-primary" (click)="showTutorial()">Tutorial</button>
+        </td>
+      </tr> -->
+    </table>
+  </div>
+</ng-template>
+
+<ng-template #popupTutorial let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Flood - Tutorial</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <table>
+      <tr class="font-bold">
+        <td class="text-right">{{floodTutorialMove+1}} / 8</td>
+        <td></td>
+      </tr>
+      <tr class="text-center">
+        <td>
+          <table class="tutorial-table aadupuli-container" [ngClass]="{'tutorial-borders': display.floodBorders}">
+            <tr *ngFor="let row of floodTutorial.arrFlood">
+              <td *ngFor="let col of row" class="flood tutorial-cell" [style.background-color]="getColor(col.cellColor)" [style.width]="display.floodCellSize"
+                [style.height]="display.floodCellSize"></td>
+            </tr>
+          </table>
+        </td>
+        <td class="va-top text-left p-left-2" rowspan="2">
+          <div>{{floodTutorialMessage}}</div>
+          <div>
+            <button type="button" *ngIf="floodTutorialMove === 6" class="btn btn-outline-primary m-top-2" (click)="showTutorial()">Play Again</button>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center p-top-1">
+          <table>
+            <tr>
+              <td class="tutorial-palette" *ngFor="let palette of arrColors; let i = index">
+                <span class="fa fa-hand-pointer-o fa-rotate-180 animate-up-down" *ngIf="i === floodTutorial.tutorialMoves[floodTutorialMove+1]"></span>
+              </td>
+            </tr>
+          </table>
+          <table [ngClass]="{'tutorial-borders': display.floodBorders}">
+            <tr>
+              <td class="tutorial-palette" *ngFor="let palette of arrColors; let i = index" [style.background-color]="getColor(i)" [ngClass]="{'tutorial-palette-select': i === floodTutorial.tutorialMoves[floodTutorialMove+1]}"
+                (click)="startTutorialFlooding(i)"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</ng-template>
