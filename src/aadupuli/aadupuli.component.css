@@ -386,19 +386,19 @@ span.title-button {
 	height: 8vw;
 }
 .settings-button-tiger {
+	width: 8vw;
+	height: 8vw;
 	content: url('./Tiger.png');
-	width: 8vw;
-	height: 8vw;
-}
-.settings-button-tiger-selected {
-	width: 8vw;
-	height: 8vw;
-	background-image: url('./Tiger.png');
 	background-repeat: no-repeat;
 	background-size: contain;
 	display: inline-block;
 	position: relative;
 	text-align: left;
+}
+.settings-button-tiger-selected {
+	width: 8vw;
+	height: 8vw;
+	background-image: url('./Tiger.png');
 }
 .settings-button-tiger-selected:before {
 	font-family: FontAwesome;
@@ -411,9 +411,14 @@ span.title-button {
 	left: 7vw;
 }
 .settings-button-sheep {
-	content: url('./Sheep.png');
 	width: 8vw;
 	height: 8vw;
+	content: url('./Sheep.png');
+	background-repeat: no-repeat;
+	background-size: contain;
+	display: inline-block;
+	position: relative;
+	text-align: left;
 }
 .settings-button-sheep-selected {
 	width: 8vw;
@@ -436,9 +441,14 @@ span.title-button {
 	left: 6vw;
 }
 .settings-button-aadupuli {
-	content: url('./Aadupuli.svg');
 	width: 8vw;
 	height: 8vw;
+	content: url('./Aadupuli.svg');
+	background-repeat: no-repeat;
+	background-size: contain;
+	display: inline-block;
+	position: relative;
+	text-align: left;
 }
 .settings-button-aadupuli-selected {
 	width: 8vw;
@@ -461,9 +471,14 @@ span.title-button {
 	left: 6vw;
 }
 .settings-button-bhagchal {
-	content: url('./BhagChal.svg');
 	width: 8vw;
 	height: 8vw;
+	content: url('./BhagChal.svg');
+	background-repeat: no-repeat;
+	background-size: contain;
+	display: inline-block;
+	position: relative;
+	text-align: left;
 }
 .settings-button-bhagchal-selected {
 	width: 8vw;

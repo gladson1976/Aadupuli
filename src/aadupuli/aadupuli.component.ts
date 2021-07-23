@@ -1,10 +1,9 @@
 import { Component, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { AadupuliBoard, PersistData, PersistDataAadupuli, PersistDataStats, PersistDataSettings } from './aadupuli.model';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NgbActiveModal, NgbModal, NgbModalRef, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { WindowRef } from './windowref.service';
-import { Http, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Http } from '@angular/http';
 import { isBoolean } from 'util';
 
 @Component({
@@ -104,6 +103,7 @@ export class AadupuliComponent {
   aadupuliJumpPoints:any[];
 
   aadupuliBoardNames = ["Aadupuli", "Bhag Chal"];
+  aadupuliBoards = ["Aadupuli.svg", "BhagChal.svg"];
   aadupuliBoardSize:number[] = [23, 25];
   aadupuliSheepCount:number[] = [15, 20];
   aadupuliTigerCount:number[] = [3, 4];
@@ -197,7 +197,31 @@ export class AadupuliComponent {
 			[17, 21]
 		],
 		[
-			[]
+			[1, 5, 6],
+      [0, 2, 6],
+      [1, 3, 6, 7, 8],
+      [2, 4, 8],
+      [3, 8, 9],
+      [0, 6, 10],
+      [0, 1, 2, 5, 7, 10, 11, 12],
+      [2, 6, 8, 12],
+      [2, 3, 4, 7, 9, 12, 13, 14],
+      [4, 8, 14],
+      [5, 6, 11, 15, 16],
+      [6, 10, 12, 16],
+      [6, 7, 8, 11, 13, 16, 17, 18],
+      [8, 12, 14, 18],
+      [8, 9, 13, 18, 19],
+      [10, 16, 20],
+      [10, 11, 12, 15, 17, 20, 21, 22],
+      [12, 16, 18, 22],
+      [12, 13, 14, 17, 19, 22, 23, 24],
+      [14, 18, 24],
+      [15, 16, 21],
+      [16, 20, 22],
+      [16, 17, 18, 21, 23],
+      [18, 22, 24],
+      [18, 19, 23]
 		]
   ];
   aadupuliKillMoves =
@@ -228,7 +252,31 @@ export class AadupuliComponent {
       [[17, 11], [21, 20]]
 		],
 		[
-			[]
+			[[1, 2], [5, 10], [6, 12]],
+      [[2, 3], [6, 11]],
+      [[1, 0], [3, 4], [6, 10], [7, 12], [8, 14]],
+      [[2, 1], [8, 13]],
+      [[3, 2], [8, 12], [9, 14]],
+      [[6, 7], [10, 15]],
+      [[7, 8], [11, 16], [12, 18]],
+      [[6, 5], [8, 9], [12, 17]],
+      [[7, 6], [12, 16], [13, 18]],
+      [[8, 7], [14, 19]],
+      [[5, 0], [6, 2], [11, 12], [16, 22], [15, 20]],
+      [[6, 1], [12, 13], [16, 21]],
+      [[6, 0], [7, 2], [8, 4], [11, 10], [13, 14], [16, 20], [17, 22], [18, 24]],
+      [[8, 3], [12, 11], [18, 23]],
+      [[9, 4], [13, 12], [19, 24]],
+      [[10, 5], [16, 17]],
+      [[11, 6], [12, 8], [17, 18]],
+      [[12, 7], [16, 15], [18, 19]],
+      [[12, 6], [13, 8], [17, 16]],
+      [[14, 9], [18, 17]],
+      [[15, 10], [16, 12], [21, 22]],
+      [[16, 11], [22, 23]],
+      [[16, 10], [17, 12], [18, 14], [21, 20], [23, 24]],
+      [[18, 13], [22, 21]],
+      [[18, 12], [19, 14], [23, 22]]
 		]
 	];
   aadupuliBoard:AadupuliBoard = new AadupuliBoard();
@@ -274,6 +322,7 @@ export class AadupuliComponent {
         this.aadupuliBoard = this.persistData.inProgress.aadupuli;
       }
     }
+    this.settings = this.persistData.aadipuliSettings;
   }
 
   savePersistData(saveGrid:boolean = true) {
@@ -340,8 +389,9 @@ export class AadupuliComponent {
       this.aadupuliPopupMessage = "Start new Aadupuli ?";
       this.modalService.open(this.popupConfirm, {}).result.then (
         (result) => {
-          this.persistData.aadupuliStats.played[this.settings.board][0]++;
+          this.persistData.aadupuliStats.played[this.aadupuliBoard.board][0]++;
           this.persistData.inProgress = new PersistDataAadupuli();
+          this.persistData.inProgress.aadupuli.board = this.persistData.aadipuliSettings.board;
           this.initBoard();
           this.aadupuliStarted = false;
           this.isTigerLost = false;
@@ -352,6 +402,7 @@ export class AadupuliComponent {
       )
     } else {
       this.persistData.inProgress = new PersistDataAadupuli();
+      this.persistData.inProgress.aadupuli.board = this.persistData.aadipuliSettings.board;
       this.initBoard();
       this.aadupuliStarted = false;
       this.savePersistData(false);
@@ -371,11 +422,12 @@ export class AadupuliComponent {
     this.aadupuliTigerJump = {};
     this.aadupuliComplete = false;
     this.aadupuliBoard = new AadupuliBoard();
-    for(let i = 0; i < this.aadupuliBoardSize[this.settings.board]; i++) {
+    this.aadupuliBoard.board = this.persistData.inProgress.aadupuli.board;
+    for(let i = 0; i < this.aadupuliBoardSize[this.persistData.inProgress.aadupuli.board]; i++) {
       this.aadupuliBoard.aadupuli[i] = this.EMPTY;
     }
-    for(let i = 0; i < this.aadupuliTigerPositions[this.settings.board].length; i++) {
-      this.aadupuliBoard.aadupuli[this.aadupuliTigerPositions[this.settings.board][i]] = this.TIGER;
+    for(let i = 0; i < this.aadupuliTigerPositions[this.persistData.inProgress.aadupuli.board].length; i++) {
+      this.aadupuliBoard.aadupuli[this.aadupuliTigerPositions[this.persistData.inProgress.aadupuli.board][i]] = this.TIGER;
     }
     this.persistData.inProgress.aadupuli = this.aadupuliBoard;
 
@@ -383,12 +435,22 @@ export class AadupuliComponent {
       this.findIntersectPoints();
   }
 
+  getBoard() {
+    return `./assets/${this.aadupuliBoards[this.persistData.inProgress.aadupuli.board]}`;
+  }
+
+  changeBoard(boardIndex) {
+    this.persistData.aadipuliSettings.board = this.settings.board = boardIndex;
+    this.savePersistData();
+  }
+
   findIntersectPoints() {
+    const currentBoard = this.persistData.inProgress.aadupuli.board;
     this.intersectPoints = [];
-    for(var i = 0; i <= this.aadupuliBoardLines[this.settings.board].length; i++) {
-			for(var j = i + 1; j < this.aadupuliBoardLines[this.settings.board].length; j++) {
-				var intersect = this.lineIntersect(this.aadupuliBoardLines[this.settings.board][i].x1, this.aadupuliBoardLines[this.settings.board][i].y1, this.aadupuliBoardLines[this.settings.board][i].x2, this.aadupuliBoardLines[this.settings.board][i].y2,
-												this.aadupuliBoardLines[this.settings.board][j].x1, this.aadupuliBoardLines[this.settings.board][j].y1, this.aadupuliBoardLines[this.settings.board][j].x2, this.aadupuliBoardLines[this.settings.board][j].y2);
+    for(var i = 0; i <= this.aadupuliBoardLines[currentBoard].length; i++) {
+			for(var j = i + 1; j < this.aadupuliBoardLines[currentBoard].length; j++) {
+				var intersect = this.lineIntersect(this.aadupuliBoardLines[currentBoard][i].x1, this.aadupuliBoardLines[currentBoard][i].y1, this.aadupuliBoardLines[currentBoard][i].x2, this.aadupuliBoardLines[currentBoard][i].y2,
+												this.aadupuliBoardLines[currentBoard][j].x1, this.aadupuliBoardLines[currentBoard][j].y1, this.aadupuliBoardLines[currentBoard][j].x2, this.aadupuliBoardLines[currentBoard][j].y2);
 
 				if(intersect && (intersect.x >= 0 && intersect.x * this.aadupuliBoardRatio <= this.aadupuliBoardWidth && intersect.y >= 0 && intersect.y * this.aadupuliBoardRatio <= this.aadupuliBoardWidth)) {
 					if(this.intersectPoints.filter((e) => { return e.x === intersect.x && e.y === intersect.y }).length === 0)
@@ -470,10 +532,10 @@ export class AadupuliComponent {
         this.aadupuliComplete = true;
         this.aadupuliStarted = false;
         this.newHighscore = true;
-        this.persistData.aadupuliStats.played[this.settings.board][0]++;
+        this.persistData.aadupuliStats.played[this.aadupuliBoard.board][0]++;
         if(checkResult === this.TIGER_LOST) {
           this.isTigerLost = true
-          this.persistData.aadupuliStats.won[this.settings.board][0]++;
+          this.persistData.aadupuliStats.won[this.aadupuliBoard.board][0]++;
         }
         this.showHurrah();
       } else {
@@ -528,10 +590,10 @@ export class AadupuliComponent {
       this.aadupuliComplete = true;
       this.aadupuliStarted = false;
       this.newHighscore = true;
-      this.persistData.aadupuliStats.played[this.settings.board][0]++;
+      this.persistData.aadupuliStats.played[this.aadupuliBoard.board][0]++;
       if(checkResult === this.TIGER_LOST) {
         this.isTigerLost = true
-        this.persistData.aadupuliStats.won[this.settings.board][0]++;
+        this.persistData.aadupuliStats.won[this.aadupuliBoard.board][0]++;
       }
       this.showHurrah();
     }

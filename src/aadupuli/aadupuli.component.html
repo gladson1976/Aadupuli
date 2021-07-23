@@ -34,7 +34,7 @@
     <line [attr.x1]="aadupuliTigerJump.x1" [attr.y1]="aadupuliTigerJump.y1" [attr.x2]="aadupuliTigerJump.x2" [attr.y2]="aadupuliTigerJump.y2"
       stroke="red" stroke-width="2px" />
   </svg>  
-  <img width="100%" #aadupuliBoardImage id="aadupuliBoard" src="./assets/Aadupuli.svg">
+  <img width="100%" #aadupuliBoardImage id="aadupuliBoard" [src]="getBoard()">
   <div *ngFor="let markPoint of aadupuliMarkPoints; let i = index" [id]="markPoint.id" [class]="markPoint.class" [style.left.px]="markPoint.left" [style.top.px]="markPoint.top"
     [style.width.px]="markPoint.width" [style.height.px]="markPoint.height" [style.margin-left.px]="markPoint.marginLeft" [style.margin-top.px]="markPoint.marginTop"
     [ngClass]="{'circle-red': sheepKillPosition !== null && sheepKillPosition === i}"></div>
@@ -70,10 +70,10 @@
       <tr>
         <td class="va-top">Board</td>
         <td class="text-right">
-          <button type="button" class="btn btn-sm btn-white text-right" id="boardAadupuli">
+          <button type="button" class="btn btn-sm btn-white text-right" id="boardAadupuli" (click)="changeBoard(0)">
             <div [ngClass]="{'settings-button-aadupuli': settings.board !== 0, 'settings-button-aadupuli-selected': settings.board === 0}"></div>
           </button>
-          <button type="button" class="btn btn-sm btn-white text-right" id="boardBhagChal">
+          <button type="button" class="btn btn-sm btn-white text-right" id="boardBhagChal" (click)="changeBoard(1)">
             <div [ngClass]="{'settings-button-bhagchal': settings.board !== 1, 'settings-button-bhagchal-selected': settings.board === 1}"></div>
           </button>
         </td>
@@ -145,13 +145,21 @@
     <table class="settings-table">
       <tr>
         <td>
+          <div class="font-bold">{{appTitle}} v{{appVersion}}</div>
+          <div class="font-small">Developed by</div>
+          <div class="font-small">Prabhu Thomas</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
           <div class="font-bold">Objective and Instructions</div>
           <ul class="list-unstyled font-small">
             <li>Aadupuliyaatam (literally, Game of Goats and Tigers) is a classic game played in South India.</li>
-            <li>It is a strategic, assymetric, two player game in which one player controls three tigers and the other controls upto fifteen goats or sheep.</li>
+            <li>It is a strategic, assymetric, two player game in which one player controls 3 tigers and the other controls upto 15 goats.</li>
             <li>The tigers 'hunt' the goats and the goats try to block the tigers' movements and capture them.</li>
+            <li>BhagChal is a variant with a different board played in North India with 4 tigers and upto 20 goats.</li>
             <li>&nbsp;</li>
-            <li>At the start, the tigers are placed at the apex and the two positions closest to the apex. The goats start off the board.</li>
+            <li>At the start, the tigers start in their positions in the board. The goats start off the board.</li>
             <li>The goats are placed one per turn in any of the intersections on the board. Players alternate between turns.</li>
             <li>Moves are done along the lines from one intersection to another empty intersection.</li>
             <li>&nbsp;</li>
@@ -166,7 +174,7 @@
             <li>They can only move after all 15 goats have been placed on the board.</li>
             <li></li>
             <li class="font-bold">Winning</li>
-            <li>Tigers win if all (or 6 in some variants) the goats are captured. Goats win if all tigers are blocked from movement.</li>
+            <li>Tigers win if all the goats are captured. Goats win if all tigers are blocked from movement.</li>
           </ul>
         </td>
       </tr>
